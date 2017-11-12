@@ -164,7 +164,7 @@ public class EquipmentRentalRequest {
         return hash;
     }
     
-    public Date stringToDate(String s) throws ParseException{                   
+    public Date stringToDate(String s){                   
         Date d = null;
         try{
             d = date.parse(s);
@@ -191,8 +191,8 @@ public class EquipmentRentalRequest {
     }
     
     public static void main(String[] args){
-        Employee requestor = new Employee("drevp", "drevp", 0123, Function.SITE_ENGINEER);
-        Employee handler = new Employee("willv", "willv", 4567, Function.CLERK);
+        Employee requestor = new Employee("drevp", 0123, Function.SITE_ENGINEER);
+        Employee handler = new Employee("willv", 4567, Function.CLERK);
         Site site = new Site("Zebrastraat");
         EquipmentRentalRequest eqr = new EquipmentRentalRequest(requestor, handler, site, "05.04.1996", "05.04.1996");
         eqr.printOutput();

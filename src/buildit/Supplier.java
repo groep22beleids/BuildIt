@@ -5,6 +5,8 @@
  */
 package buildit;
 
+import java.util.Objects;
+
 /**
  *
  * @author Dries
@@ -49,6 +51,39 @@ public class Supplier {
     @Override
     public String toString() {
         return "Name: " + name + ", email: " + email + ", phoneNumber: " + phoneNumber + " ";
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + Objects.hashCode(this.name);
+        hash = 59 * hash + Objects.hashCode(this.email);
+        hash = 59 * hash + this.phoneNumber;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Supplier other = (Supplier) obj;
+        if (this.phoneNumber != other.phoneNumber) {
+            return false;
+        }
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.email, other.email)) {
+            return false;
+        }
+        return true;
     }
     
 }

@@ -5,6 +5,8 @@
  */
 package buildit;
 
+import java.util.Objects;
+
 /**
  *
  * @author Dries
@@ -23,14 +25,35 @@ public class Requirement {
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    public boolean equals(Requirement r){
-        return this.description.equals(r.getDescription());
-    }
 
     @Override
     public String toString() {
         return description;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + Objects.hashCode(this.description);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Requirement other = (Requirement) obj;
+        if (!Objects.equals(this.description, other.description)) {
+            return false;
+        }
+        return true;
     }
     
 }

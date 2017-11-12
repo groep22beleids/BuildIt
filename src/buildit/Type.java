@@ -6,6 +6,7 @@
 package buildit;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  *
@@ -66,5 +67,12 @@ public class Type{
             text = text + r.toString() + "/n";
         return  text;
     }
-    
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.requirementsList);
+        hash = 67 * hash + Objects.hashCode(this.name);
+        return hash;
+    }
 }

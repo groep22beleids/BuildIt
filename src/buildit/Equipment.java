@@ -5,28 +5,31 @@
  */
 package buildit;
 
+import java.util.Objects;
+
 /**
  *
  * @author Dries
  */
 public class Equipment {
-    private String code, description;
+    private String description;
+    private int code;
     private Type type;
 
     public Equipment() {
     }
 
-    public Equipment(String code, String description, Type type) {
-        this.code = code;
+    public Equipment(String description, Type type) {
+        this.code = this.hashCode();
         this.description = description;
         this.type = type;
     }
 
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(int code) {                                             //Mag niet gebruikt worden.
         this.code = code;
     }
 
@@ -49,6 +52,38 @@ public class Equipment {
     @Override
     public String toString() {
         return "Code: " + code + ", description: " + description + ", type: " + type + " ";
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + Objects.hashCode(this.description);
+        hash = 67 * hash + Objects.hashCode(this.type);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Equipment other = (Equipment) obj;
+        if (this.code != other.code) {
+            return false;
+        }
+        if (!Objects.equals(this.description, other.description)) {
+            return false;
+        }
+        if (!Objects.equals(this.type, other.type)) {
+            return false;
+        }
+        return true;
     }
     
 }
