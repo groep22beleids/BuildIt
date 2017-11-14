@@ -16,8 +16,6 @@ import java.util.Objects;
  * @author Dries
  */
 public class EquipmentRentalRequest {
-    private static final SimpleDateFormat fullDate = new SimpleDateFormat("E dd.MM.yyyy 'at' HH:mm:ss");
-    private static final SimpleDateFormat date = new SimpleDateFormat("dd.MM.yyyy");
     enum Status{REQUESTED , PROCESSED};
     
     private Site constructionSite;
@@ -44,14 +42,14 @@ public class EquipmentRentalRequest {
         this.dailyRentalPrice = 0;
     }
 
-    public EquipmentRentalRequest(Employee requestor, Employee handler, Site constructionSite, String rentalPeriodStart, String rentalPeriodEnd) {
-        this.requestor = requestor;
+    public EquipmentRentalRequest(int requestor, int handler, String constructionSite, String rentalPeriodStart, String rentalPeriodEnd) {
+        this.requestor = requestor;                                             //Mehtodes om deze objecten te vinden uit de database adhv een string of variabele.
         this.handler = handler;
         this.constructionSite = constructionSite;
         this.requestNumber = this.hashCode();
         this.requestDate = new Date();
-        this.rentalPeriodStart = stringToDate(rentalPeriodStart);
-        this.rentalPeriodEnd = stringToDate(rentalPeriodEnd);
+        this.rentalPeriodStart = HelperMethods.stringToDate(rentalPeriodStart);
+        this.rentalPeriodEnd = HelperMethods.stringToDate(rentalPeriodEnd);
         this.logDate = new Date();
         this.status = Status.REQUESTED;
         this.selectedEquipment = null;                                          //Nog niet bepaald bij constructie
@@ -163,38 +161,20 @@ public class EquipmentRentalRequest {
         hash = 13 * hash + Objects.hashCode(this.logDate);
         return hash;
     }
-    
-    public Date stringToDate(String s){                   
-        Date d = null;
-        try{
-            d = date.parse(s);
-        } catch(ParseException e){
-            System.out.println("Unparseable using " + date);
-        }
-        return d;
-    }
    
     public void printOutput(){
         System.out.println("Request number: " + this.requestNumber);
-        System.out.println("Request date: " + date.format(this.requestDate));
+        System.out.println("Request date: " + HelperMethods.dateToString(this.requestDate));
         System.out.println("Status: " + this.status);
         System.out.println("Handler: " + this.handler.toString());
         System.out.println("Requestor: " + this.requestor.toString());
         System.out.println("Construction Site" + this.constructionSite.getAdress());
-        System.out.println("Rental period start: " + date.format(this.rentalPeriodStart));
-        System.out.println("Rental period end: " + date.format(this.rentalPeriodEnd));
+        System.out.println("Rental period start: " + HelperMethods.dateToString(this.rentalPeriodStart));
+        System.out.println("Rental period end: " + HelperMethods.dateToString(this.rentalPeriodEnd));
         if(this.status.equals(status.PROCESSED)){
             System.out.println("Selected equipment: " + this.selectedEquipment.toString());
             System.out.println("Selected supplier: " + this.selectedSupplier.getName());
             System.out.println("Daily rental price: " + this.dailyRentalPrice);
         }
-    }
-    
-    public static void main(String[] args){
-        Employee requestor = new Employee("drevp", 0123, Function.SITE_ENGINEER);
-        Employee handler = new Employee("willv", 4567, Function.CLERK);
-        Site site = new Site("Zebrastraat");
-        EquipmentRentalRequest eqr = new EquipmentRentalRequest(requestor, handler, site, "05.04.1996", "05.04.1996");
-        eqr.printOutput();
     }
 }

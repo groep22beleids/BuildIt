@@ -13,8 +13,7 @@ import java.util.Date;
  * @author Dries
  */
 public class PurchaseOrder {
-    private static final SimpleDateFormat fullDate = new SimpleDateFormat("E dd.MM.yyyy 'at' HH:mm:ss");
-    private static final SimpleDateFormat date = new SimpleDateFormat("dd.MM.yyyy");
+    enum Status{DESIGN , ORDERED}
     
     private int orderNumber, supplierEquipmentCode, dailyRentalPrice, totalRentalPrice,handlingClerkCode, phoneSiteEngineer;
     private String supplierName, constructionSiteAdress;
@@ -23,6 +22,7 @@ public class PurchaseOrder {
     private Supplier supplier;
     private Site constructionSite;
     private Equipment supplierEquipment;
+    private Status status;
 
     public PurchaseOrder() {
         this.orderNumber = 0;
@@ -42,31 +42,33 @@ public class PurchaseOrder {
         this.siteEngineer = null;
         this.supplier = null;
         this.constructionSite = null;
-        this.supplierEquipment = null;        
+        this.supplierEquipment = null; 
+        this.status = Status.DESIGN;
     }
 
     public PurchaseOrder(int supplierEquipmentCode, int dailyRentalPrice, 
-            int totalRentalPrice, int handlingClerkCode, int phoneSiteEngineer, 
+            int handlingClerkCode, int phoneSiteEngineer, 
             String supplierName, String constructionSiteAdress, 
-            Date rentalPeriodStart, Date rentalPeriodEnd) {                     //String en int input is mss makkelijker om mee te werken dan Employee of Supplier input?
+            String rentalPeriodStart, String rentalPeriodEnd) {                     //String en int input is mss makkelijker om mee te werken dan Employee of Supplier input?
         this.orderNumber = orderNumber;
         this.supplierEquipmentCode = supplierEquipmentCode;
         this.dailyRentalPrice = dailyRentalPrice;
-        this.totalRentalPrice = totalRentalPrice;
+        this.totalRentalPrice = dailyRentalPrice * HelperMethods.daysBetweenDates(this.rentalPeriodStart, this.rentalPeriodEnd);
         this.handlingClerkCode = handlingClerkCode;
         this.phoneSiteEngineer = phoneSiteEngineer;
         this.supplierName = supplierName;
         this.constructionSiteAdress = constructionSiteAdress;
         this.designDate = new Date();
         this.orderDate = null;
-        this.rentalPeriodStart = rentalPeriodStart;
-        this.rentalPeriodEnd = rentalPeriodEnd;
+        this.rentalPeriodStart = HelperMethods.stringToDate(rentalPeriodStart);
+        this.rentalPeriodEnd = HelperMethods.stringToDate(rentalPeriodEnd);
         this.logDate = new Date();
         this.handlingClerk = handlingClerk;                                     //Hiervoor zijn methodes nodig die een object vinden uit de database adhv een van hun variabelen>
         this.siteEngineer = siteEngineer;
         this.supplier = supplier;
         this.constructionSite = constructionSite;
         this.supplierEquipment = supplierEquipment;
+        this.status = Status.DESIGN;
     }
 
     public int getOrderNumber() {
@@ -213,5 +215,20 @@ public class PurchaseOrder {
         this.supplierEquipment = supplierEquipment;
     }
     
-    
+    public void printOutput(){
+        System.out.println("Order number: " + this.orderNumber);
+        System.out.println("Design date: " + HelperMethods.dateToString(this.designDate));
+        if(this.status.equals(Status.ORDERED))
+            System.out.println("Order date: " + HelperMethods.dateToString(this.orderDate));
+        System.out.println("Status: " + this.status);
+        System.out.println("Handling clerk: " + this.handlingClerkCode);
+        System.out.println("Supplier: " + this.supplierName);
+        System.out.println("Supplier equipment code: " + this.supplierEquipmentCode);
+        System.out.println("Daily rental price: $ " + this.dailyRentalPrice);
+        System.out.println("Rental period start: " + HelperMethods.dateToString(this.rentalPeriodStart));
+        System.out.println("Rental period end: " + HelperMethods.dateToString(this.rentalPeriodEnd));
+        System.out.println("Total rental price: $ " + this.totalRentalPrice);
+        System.out.println("Construction site: " + this.constructionSiteAdress);
+        System.out.println("Phonenumber site engineer: " + this.phoneSiteEngineer);
+    }
 }
