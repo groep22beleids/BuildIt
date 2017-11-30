@@ -16,6 +16,7 @@ public class Type{
     private ArrayList<Requirement> requirementsList;
     private String name;
     private String test;
+    private String test2;
     
 
     public Type() {
