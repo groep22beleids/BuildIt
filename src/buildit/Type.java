@@ -18,7 +18,9 @@ public class Type{
     private String test;
     private String test2;
     private String test3;
-    private String testSander;
+    private String mayatest;
+    private String test4;
+    private String tim;
     
     public Type() {
         name = null;
