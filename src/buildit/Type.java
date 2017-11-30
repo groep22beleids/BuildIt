@@ -19,6 +19,7 @@ public class Type{
     private String test2;
     private String test3;
     private String mayatest;
+    private String test4;
     
     public Type() {
         name = null;
