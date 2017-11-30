@@ -18,11 +18,8 @@ public class Type{
     private String test;
     private String test2;
     private String test3;
-
-
-
+    private String testSander;
     
-
     public Type() {
         name = null;
         requirementsList = new ArrayList<Requirement>();
