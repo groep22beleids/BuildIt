@@ -15,6 +15,7 @@ public class Employee {
     private String email, functionString;
     private int employeeID, phoneNumber;
     private Function function;
+    private String sander;
     
     enum Function {SITE_ENGINEER , CLERK , WORKS_ENGINEER}
 
