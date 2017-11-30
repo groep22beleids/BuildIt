@@ -15,6 +15,8 @@ import java.util.Objects;
 public class Type{
     private ArrayList<Requirement> requirementsList;
     private String name;
+    private String test;
+    
 
     public Type() {
         name = null;
