@@ -17,6 +17,10 @@ public class Type{
     private String name;
     private String test;
     private String test2;
+    private String test3;
+
+
+
     
 
     public Type() {
