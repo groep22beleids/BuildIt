@@ -21,8 +21,8 @@ public class Employee {
     public Employee() {
     }
     
-    public Employee(String email, int phoneNumber, Function function) {
-        this.employeeID = this.hashCode();                                      //Staan deze in de gegeven database of moeten we die zelf genereren?
+    public Employee(int employeeID, String email, int phoneNumber, Function function) {
+        this.employeeID = employeeID;                                           
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.function = function;

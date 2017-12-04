@@ -43,9 +43,11 @@ public class EquipmentRentalRequest {
     }
 
     public EquipmentRentalRequest(int requestor, int handler, String constructionSite, String rentalPeriodStart, String rentalPeriodEnd) {
-        this.requestor = requestor;                                             //Mehtodes om deze objecten te vinden uit de database adhv een string of variabele.
-        this.handler = handler;
-        this.constructionSite = constructionSite;
+        this.requestor = DBMethods.getEmployee(requestor);                                             //Mehtodes om deze objecten te vinden uit de database adhv een string of variabele.
+        this.handler = DBMethods.getEmployee(handler);
+        if(DBMethods.isSite(constructionSite)){
+            this.constructionSite = constructionSite;
+        }
         this.requestNumber = this.hashCode();
         this.requestDate = new Date();
         this.rentalPeriodStart = HelperMethods.stringToDate(rentalPeriodStart);
