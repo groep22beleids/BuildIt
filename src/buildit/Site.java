@@ -13,12 +13,11 @@ import java.util.Objects;
  */
 public class Site {
     private String adress;
+    private Employee siteEngineer;
 
-    public Site() {
-    }
-
-    public Site(String adress) {
+    public Site(String adress, Employee siteEngineer) {
         this.adress = adress;
+        this.siteEngineer = siteEngineer;
     }
 
     public String getAdress() {
@@ -29,16 +28,17 @@ public class Site {
         this.adress = adress;
     }
 
-    @Override
-    public String toString() {
-        return "Adress: " + adress + " ";
+    public Employee getSiteEngineer() {
+        return siteEngineer;
+    }
+
+    public void setSiteEngineer(Employee siteEngineer) {
+        this.siteEngineer = siteEngineer;
     }
 
     @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 67 * hash + Objects.hashCode(this.adress);
-        return hash;
+    public String toString() {
+        return "Adress: " + adress + " ";
     }
 
     @Override

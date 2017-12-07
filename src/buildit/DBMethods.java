@@ -68,4 +68,36 @@ public class DBMethods {
         }
         return b;
     }
+    
+    public static PurchaseOrder getPO(int poid) throws DBException{
+        PurchaseOrder po = null;
+        Connection con = null;
+        try{
+            con = DBConnector.getConnection();
+            Statement stmt = con.createStatement();
+            
+            String sql = "SELECT orderNumber, orderDate, handlingClerk, supplier," 
+                    + "supplierEquipmentCode, dailyRentalPrice, rentalPeriodStart," 
+                    + " rentalPeriodEnd, totalRentalPrice, constructionSite "
+                    + "FROM POs "
+                    + "WHERE orderNumber = " + poid;
+            ResultSet srs = stmt.executeQuery(sql);
+            
+            po = new PurchaseOrder(srs.getInt("orderNumber"), srs.getDate("orderDate"),
+                    srs.getInt("handlingClerk"), srs.getString("supplier"), srs.getInt("supplierEquipmentCode"),
+                    srs.getInt("dailyRentalPrice"), srs.getDate("rentalPeriodStart"),
+                    srs.getDate("rentalPeriodEnd"), srs.getInt("totalRentalPrice"),
+                    srs.getString("constructionSite"));
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            DBConnector.closeConnection(con);
+            throw new DBException(ex);
+        }
+        DBConnector.closeConnection(con);
+        return po;
+    }
+    
+    public static Supplier getSupplier(String s) throws DBException{
+    }
 }

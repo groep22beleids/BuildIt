@@ -11,11 +11,22 @@ import java.util.Objects;
  *
  * @author Dries
  */
-public class Requirement {
-    private String description;
+public class BuildItEquipment {
+    private String description, type;
+    private int code;
 
-    public Requirement(String description) {
+    public BuildItEquipment(int code, String type, String description) {
+        this.code = code;
         this.description = description;
+        this.type = type;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {                                             //Mag niet gebruikt worden.
+        this.code = code;
     }
 
     public String getDescription() {
@@ -26,17 +37,19 @@ public class Requirement {
         this.description = description;
     }
 
-    @Override
-    public String toString() {
-        return description;
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 79 * hash + Objects.hashCode(this.description);
-        return hash;
+    public String toString() {
+        return "Code: " + code + ", description: " + description + ", type: " + type + " ";
     }
+
 
     @Override
     public boolean equals(Object obj) {
@@ -49,8 +62,14 @@ public class Requirement {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Requirement other = (Requirement) obj;
+        final BuildItEquipment other = (BuildItEquipment) obj;
+        if (this.code != other.code) {
+            return false;
+        }
         if (!Objects.equals(this.description, other.description)) {
+            return false;
+        }
+        if (!Objects.equals(this.type, other.type)) {
             return false;
         }
         return true;

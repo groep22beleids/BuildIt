@@ -15,9 +15,6 @@ public class Supplier {
     private String name, email;
     private int phoneNumber;
 
-    public Supplier() {
-    }
-
     public Supplier(String name, String email, int phoneNumber) {
         this.name = name;
         this.email = email;
@@ -51,15 +48,6 @@ public class Supplier {
     @Override
     public String toString() {
         return "Name: " + name + ", email: " + email + ", phoneNumber: " + phoneNumber + " ";
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 59 * hash + Objects.hashCode(this.name);
-        hash = 59 * hash + Objects.hashCode(this.email);
-        hash = 59 * hash + this.phoneNumber;
-        return hash;
     }
 
     @Override
