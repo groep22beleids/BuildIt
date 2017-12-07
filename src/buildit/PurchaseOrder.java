@@ -13,62 +13,35 @@ import java.util.Date;
  * @author Dries
  */
 public class PurchaseOrder {
-    enum Status{DESIGN , ORDERED}
-    
     private int orderNumber, supplierEquipmentCode, dailyRentalPrice, totalRentalPrice,handlingClerkCode, phoneSiteEngineer;
     private String supplierName, constructionSiteAdress;
-    private Date designDate, orderDate, rentalPeriodStart, rentalPeriodEnd, logDate;
-    private Employee handlingClerk, siteEngineer;
+    private Date orderDate, rentalPeriodStart, rentalPeriodEnd, logDate;
+    private Employee handlingClerk;
     private Supplier supplier;
     private Site constructionSite;
     private Equipment supplierEquipment;
-    private Status status;
 
-    public PurchaseOrder() {
-        this.orderNumber = 0;
-        this.supplierEquipmentCode = 0;
-        this.dailyRentalPrice = 0;
-        this.totalRentalPrice = 0;
-        this.handlingClerkCode = 0;
-        this.phoneSiteEngineer = 0;
-        this.supplierName = null;
-        this.constructionSiteAdress = null;
-        this.designDate = new Date();
-        this.orderDate = null;
-        this.rentalPeriodStart = null;
-        this.rentalPeriodEnd = null;
-        this.logDate = new Date();
-        this.handlingClerk = null;
-        this.siteEngineer = null;
-        this.supplier = null;
-        this.constructionSite = null;
-        this.supplierEquipment = null; 
-        this.status = Status.DESIGN;
-    }
 
-    public PurchaseOrder(int supplierEquipmentCode, int dailyRentalPrice, 
-            int handlingClerkCode, int phoneSiteEngineer, 
-            String supplierName, String constructionSiteAdress, 
-            String rentalPeriodStart, String rentalPeriodEnd) {                     //String en int input is mss makkelijker om mee te werken dan Employee of Supplier input?
+    public PurchaseOrder(int orderNumber, Date orderDate,
+            int handlingClerkCode, String supplierName, int supplierEquipmentCode, 
+            int dailyRentalPrice, Date rentalPeriodStart, Date rentalPeriodEnd,
+            int totalRentalPrice, String constructionSite) {                     //String en int input is mss makkelijker om mee te werken dan Employee of Supplier input?
         this.orderNumber = orderNumber;
         this.supplierEquipmentCode = supplierEquipmentCode;
         this.dailyRentalPrice = dailyRentalPrice;
         this.totalRentalPrice = dailyRentalPrice * HelperMethods.daysBetweenDates(this.rentalPeriodStart, this.rentalPeriodEnd);
         this.handlingClerkCode = handlingClerkCode;
-        this.phoneSiteEngineer = phoneSiteEngineer;
+        this.phoneSiteEngineer = this.handlingClerk.getPhoneNumber();
         this.supplierName = supplierName;
-        this.constructionSiteAdress = constructionSiteAdress;
-        this.designDate = new Date();
-        this.orderDate = null;
-        this.rentalPeriodStart = HelperMethods.stringToDate(rentalPeriodStart);
-        this.rentalPeriodEnd = HelperMethods.stringToDate(rentalPeriodEnd);
+        this.constructionSiteAdress = constructionSite;
+        this.orderDate = orderDate;
+        this.rentalPeriodStart = rentalPeriodStart;
+        this.rentalPeriodEnd = rentalPeriodEnd;
         this.logDate = new Date();
-        this.handlingClerk = handlingClerk;                                     //Hiervoor zijn methodes nodig die een object vinden uit de database adhv een van hun variabelen>
-        this.siteEngineer = siteEngineer;
-        this.supplier = supplier;
-        this.constructionSite = constructionSite;
-        this.supplierEquipment = supplierEquipment;
-        this.status = Status.DESIGN;
+        this.handlingClerk = DBMethods.getEmployee(handlingClerkCode);          //Hiervoor zijn methodes nodig die een object vinden uit de database adhv een van hun variabelen
+        this.supplier = DBMethods.getSupplier(supplierName);
+        this.constructionSite = DBMethods.getSite(constructionSite);
+        this.supplierEquipment = DBMethods.getEquipment(DBMethods.getEquipmentCode(supplierEquipment));
     }
 
     public int getOrderNumber() {
@@ -135,14 +108,6 @@ public class PurchaseOrder {
         this.constructionSiteAdress = constructionSiteAdress;
     }
 
-    public Date getDesignDate() {
-        return designDate;
-    }
-
-    public void setDesignDate(Date designDate) {
-        this.designDate = designDate;
-    }
-
     public Date getOrderDate() {
         return orderDate;
     }
@@ -183,14 +148,6 @@ public class PurchaseOrder {
         this.handlingClerk = handlingClerk;
     }
 
-    public Employee getSiteEngineer() {
-        return siteEngineer;
-    }
-
-    public void setSiteEngineer(Employee siteEngineer) {
-        this.siteEngineer = siteEngineer;
-    }
-
     public Supplier getSupplier() {
         return supplier;
     }
@@ -217,10 +174,7 @@ public class PurchaseOrder {
     
     public void printOutput(){
         System.out.println("Order number: " + this.orderNumber);
-        System.out.println("Design date: " + HelperMethods.dateToString(this.designDate));
-        if(this.status.equals(Status.ORDERED))
-            System.out.println("Order date: " + HelperMethods.dateToString(this.orderDate));
-        System.out.println("Status: " + this.status);
+        System.out.println("Order date: " + HelperMethods.dateToString(this.orderDate));
         System.out.println("Handling clerk: " + this.handlingClerkCode);
         System.out.println("Supplier: " + this.supplierName);
         System.out.println("Supplier equipment code: " + this.supplierEquipmentCode);
