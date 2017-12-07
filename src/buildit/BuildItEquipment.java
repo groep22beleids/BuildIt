@@ -12,13 +12,14 @@ import java.util.Objects;
  * @author Dries
  */
 public class BuildItEquipment {
-    private String description, type;
+    private String description, type, requirement;
     private int code;
 
-    public BuildItEquipment(int code, String type, String description) {
+    public BuildItEquipment(int code, String type, String description, String requirement) {
         this.code = code;
         this.description = description;
         this.type = type;
+        this.requirement = requirement;
     }
 
     public int getCode() {
@@ -43,6 +44,14 @@ public class BuildItEquipment {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getRequirement() {
+        return requirement;
+    }
+
+    public void setRequirement(String requirement) {
+        this.requirement = requirement;
     }
 
     @Override

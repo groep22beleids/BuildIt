@@ -5,11 +5,8 @@
  */
 package buildit;
 
-import buildit.Employee.Function;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Objects;
+import java.util.HashMap;
 
 /**
  *
@@ -19,60 +16,26 @@ public class EquipmentRentalRequest {
     enum Status{REQUESTED , PROCESSED};
     
     private Site constructionSite;
-    private Employee requestor, handler;
+    private Employee siteEngineerID, clerkID, worksEngineerID;
     private int requestNumber;
-    private Date requestDate, rentalPeriodStart, rentalPeriodEnd, logDate;      //Logdate is het tijdstip van laatste aanpassing. Dit wordt iedere keer met die datum in de log geplaatst
+    private Date requestDate, rentalPeriodStart, rentalPeriodEnd, logDate;     
     private Status status;
-    private Equipment selectedEquipment;                                        //De laatste drie pas vanaf status: PROCESSED
-    private Supplier selectedSupplier;
-    private int dailyRentalPrice;
+    private HashMap<BuildItEquipment, Integer> selectedBuildItEquipment;
+    private HashMap<SupplierEquipment, Integer> selectedSupplierEquipment;
+    private String reasonForCancellationOrRefusal;
 
-    public EquipmentRentalRequest() {
-        this.requestor = null;
-        this.handler = null;
-        this.constructionSite = null;
-        this.requestNumber = 0;
-        this.requestDate = new Date();
-        this.rentalPeriodStart = null;
-        this.rentalPeriodEnd = null;
+    public EquipmentRentalRequest(int code, Date requestDate, String constructionSite, 
+            Date rentalPeriodStart, Date rentalPeriodEnd, Status rentalStatus, 
+            int siteEngineerID, HashMap<BuildItEquipment, Integer> h) throws DBException{
+        this.siteEngineerID = DBMethods.getEmployee(siteEngineerID);                      
+        this.constructionSite = DBMethods.getSite(constructionSite);
+        this.requestNumber = code;
+        this.requestDate = requestDate;
+        this.rentalPeriodStart = rentalPeriodStart;
+        this.rentalPeriodEnd = rentalPeriodEnd;
         this.logDate = new Date();
         this.status = Status.REQUESTED;
-        this.selectedEquipment = null;
-        this.selectedSupplier = null;
-        this.dailyRentalPrice = 0;
-    }
-
-    public EquipmentRentalRequest(int requestor, int handler, String constructionSite, String rentalPeriodStart, String rentalPeriodEnd) {
-        this.requestor = DBMethods.getEmployee(requestor);                                             //Mehtodes om deze objecten te vinden uit de database adhv een string of variabele.
-        this.handler = DBMethods.getEmployee(handler);
-        if(DBMethods.isSite(constructionSite)){
-            this.constructionSite = constructionSite;
-        }
-        this.requestNumber = this.hashCode();
-        this.requestDate = new Date();
-        this.rentalPeriodStart = HelperMethods.stringToDate(rentalPeriodStart);
-        this.rentalPeriodEnd = HelperMethods.stringToDate(rentalPeriodEnd);
-        this.logDate = new Date();
-        this.status = Status.REQUESTED;
-        this.selectedEquipment = null;                                          //Nog niet bepaald bij constructie
-        this.selectedSupplier = null;
-        this.dailyRentalPrice = 0;
-    }
-
-    public Employee getRequestor() {
-        return requestor;
-    }
-
-    public void setRequestor(Employee requestor) {
-        this.requestor = requestor;
-    }
-
-    public Employee getHandler() {
-        return handler;
-    }
-
-    public void setHandler(Employee handler) {
-        this.handler = handler;
+        this.selectedBuildItEquipment = h;
     }
 
     public Site getConstructionSite() {
@@ -131,52 +94,53 @@ public class EquipmentRentalRequest {
         this.status = status;
     }
 
-    public Equipment getSelectedEquipment() {
-        return selectedEquipment;
+    public Employee getSiteEngineerID() {
+        return siteEngineerID;
     }
 
-    public void setSelectedEquipment(Equipment selectedEquipment) {
-        this.selectedEquipment = selectedEquipment;
+    public void setSiteEngineerID(Employee siteEngineerID) {
+        this.siteEngineerID = siteEngineerID;
     }
 
-    public Supplier getSelectedSupplier() {
-        return selectedSupplier;
+    public Employee getClerkID() {
+        return clerkID;
     }
 
-    public void setSelectedSupplier(Supplier selectedSupplier) {
-        this.selectedSupplier = selectedSupplier;
+    public void setClerkID(Employee clerkID) {
+        this.clerkID = clerkID;
     }
 
-    public int getDailyRentalPrice() {
-        return dailyRentalPrice;
+    public Employee getWorksEngineerID() {
+        return worksEngineerID;
     }
 
-    public void setDailyRentalPrice(int dailyRentalPrice) {
-        this.dailyRentalPrice = dailyRentalPrice;
+    public void setWorksEngineerID(Employee worksEngineerID) {
+        this.worksEngineerID = worksEngineerID;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 13 * hash + Objects.hashCode(this.requestor);
-        hash = 13 * hash + Objects.hashCode(this.handler);
-        hash = 13 * hash + Objects.hashCode(this.logDate);
-        return hash;
+    public HashMap<BuildItEquipment, Integer> getSelectedBuildItEquipment() {
+        return selectedBuildItEquipment;
     }
-   
-    public void printOutput(){
-        System.out.println("Request number: " + this.requestNumber);
-        System.out.println("Request date: " + HelperMethods.dateToString(this.requestDate));
-        System.out.println("Status: " + this.status);
-        System.out.println("Handler: " + this.handler.toString());
-        System.out.println("Requestor: " + this.requestor.toString());
-        System.out.println("Construction Site" + this.constructionSite.getAdress());
-        System.out.println("Rental period start: " + HelperMethods.dateToString(this.rentalPeriodStart));
-        System.out.println("Rental period end: " + HelperMethods.dateToString(this.rentalPeriodEnd));
-        if(this.status.equals(status.PROCESSED)){
-            System.out.println("Selected equipment: " + this.selectedEquipment.toString());
-            System.out.println("Selected supplier: " + this.selectedSupplier.getName());
-            System.out.println("Daily rental price: " + this.dailyRentalPrice);
-        }
+
+    public void setSelectedBuildItEquipment(HashMap<BuildItEquipment, Integer> selectedBuildItEquipment) {
+        this.selectedBuildItEquipment = selectedBuildItEquipment;
     }
+
+    public HashMap<SupplierEquipment, Integer> getSelectedSupplierEquipment() {
+        return selectedSupplierEquipment;
+    }
+
+    public void setSelectedSupplierEquipment(HashMap<SupplierEquipment, Integer> selectedSupplierEquipment) {
+        this.selectedSupplierEquipment = selectedSupplierEquipment;
+    }
+
+    public String getReasonForCancellationOrRefusal() {
+        return reasonForCancellationOrRefusal;
+    }
+
+    public void setReasonForCancellationOrRefusal(String reasonForCancellationOrRefusal) {
+        this.reasonForCancellationOrRefusal = reasonForCancellationOrRefusal;
+    }
+    
+    
 }

@@ -48,25 +48,26 @@ public class DBMethods {
         return e;
     }
     
-    public static boolean isSite(String adress){
-        boolean b = false;
+    public static Site getSite(String site) throws DBException {
+        Site s = null;
         Connection con = null;
+        
         try{
             con = DBConnector.getConnection();
             Statement stmt = con.createStatement();
             
-            String sql = "SELECT adress "
-                    + "FROM ConstructionSites "
-                    + "WHERE adress = '" + adress + "'";
+            String sql = "SELECT adress, employeeID "
+                    + "FROM ConstructionSites " 
+                    + "WHERE adress = " + site;
             ResultSet srs = stmt.executeQuery(sql);
-            if(srs.next())
-                b = true;
-        } catch (DBException ex) {
-            Logger.getLogger(DBMethods.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(DBMethods.class.getName()).log(Level.SEVERE, null, ex);
+            s = new Site(srs.getString("adress"), getEmployee(srs.getInt("employeeID")));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            DBConnector.closeConnection(con);
+            throw new DBException(ex);
         }
-        return b;
+        DBConnector.closeConnection(con);
+        return s;
     }
     
     public static PurchaseOrder getPO(int poid) throws DBException{
@@ -99,5 +100,25 @@ public class DBMethods {
     }
     
     public static Supplier getSupplier(String s) throws DBException{
+        Supplier supplier = null;
+        Connection con = null;
+        
+        try{
+            con = DBConnector.getConnection();
+            Statement stmt = con.createStatement();
+            
+            String sql = "SELECT name, email, phoneNumber "
+                    + "FROM Suppliers "
+                    + "WHERE name = " + s;
+            ResultSet srs = stmt.executeQuery(sql);
+            
+            supplier = new Supplier(srs.getString("name"), srs.getString("email"), srs.getInt("phoneNumber"));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            DBConnector.closeConnection(con);
+            throw new DBException(ex);
+        }
+        DBConnector.closeConnection(con);
+        return supplier;
     }
 }
