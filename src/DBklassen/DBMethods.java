@@ -42,16 +42,8 @@ public class DBMethods {
                     + "WHERE employeeID = " + i;
             ResultSet srs = stmt.executeQuery(sql);
             
-            String email, function;
-            int employeeID, phoneNumber;
-            if(srs.next()){
-                employeeID = srs.getInt("employeeID");
-                email = srs.getString("email");
-                phoneNumber = srs.getInt("phoneNumber");
-                function = srs.getString("function");                           //Enum?
-                e = new Employee(employeeID, email, phoneNumber, function);
-            } else
-                System.out.println("Employee with ID: " + i + " does not exist in the database.");
+            srs.next();
+            e = new Employee(srs.getInt("employeeID"), srs.getString("email"), srs.getInt("phoneNumber"), srs.getString("function"));
         } catch (Exception ex) {
             ex.printStackTrace();
             DBConnector.closeConnection(con);
@@ -69,11 +61,13 @@ public class DBMethods {
             con = DBConnector.getConnection();
             Statement stmt = con.createStatement();
             
-            String sql = "SELECT adress, employeeID "
+            String sql = "SELECT address, employeeID "
                     + "FROM ConstructionSites " 
-                    + "WHERE adress = " + site;
+                    + "WHERE address = '" + site + "'";
             ResultSet srs = stmt.executeQuery(sql);
-            s = new Site(srs.getString("adress"), getEmployee(srs.getInt("employeeID")));
+            
+            srs.next();
+            s = new Site(srs.getString("address"), getEmployee(srs.getInt("employeeID")));
         } catch (Exception ex) {
             ex.printStackTrace();
             DBConnector.closeConnection(con);
@@ -97,6 +91,7 @@ public class DBMethods {
                     + "WHERE orderNumber = " + poid;
             ResultSet srs = stmt.executeQuery(sql);
             
+            srs.next();
             po = new PurchaseOrder(srs.getInt("orderNumber"), srs.getDate("orderDate"),
                     srs.getInt("handlingClerk"), srs.getString("supplier"), srs.getInt("supplierEquipmentCode"),
                     srs.getInt("dailyRentalPrice"), srs.getDate("rentalPeriodStart"),
@@ -122,9 +117,10 @@ public class DBMethods {
             
             String sql = "SELECT name, email, phoneNumber "
                     + "FROM Suppliers "
-                    + "WHERE name = " + s;
+                    + "WHERE name = '" + s + "'";
             ResultSet srs = stmt.executeQuery(sql);
             
+            srs.next();
             supplier = new Supplier(srs.getString("name"), srs.getString("email"), srs.getInt("phoneNumber"));
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -143,7 +139,7 @@ public class DBMethods {
             Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
             
             String sql = "SELECT requestNumber, requestDate, constructionSite, "
-                    + "rentalPeriodStart, rentalStatus, siteEngineerID, clerkID, "
+                    + "rentalPeriodStart, rentalPeriodEnd, rentalStatus, siteEngineerID, clerkID, "
                     + "worksEngineerID, reasonForCancellationOrRefusal "
                     + "FROM EquipmentRentalRequests "
                     + "WHERE requestNumber = " + requestNumber;
@@ -155,7 +151,8 @@ public class DBMethods {
             HashMap<BuildItEquipment, Integer> bie = new HashMap<BuildItEquipment, Integer>();
             HashMap<SupplierEquipment, Integer> se = new HashMap<SupplierEquipment, Integer>();
             
-            site = srs.getString("site");
+            srs.next();
+            site = srs.getString("constructionSite");
             status = srs.getString("rentalStatus");
             reasonForCancel = srs.getString("reasonForCancellationOrRefusal");
             request = srs.getInt("requestNumber");
@@ -167,7 +164,7 @@ public class DBMethods {
             rentalEnd = srs.getDate("rentalPeriodEnd");
             
             sql = "SELECT equipmentCode, numberOfPieces "
-                    + "FROM EERBuildItEquipments "
+                    + "FROM ERRBuildItEquipments "
                     + "WHERE requestNumber = " + requestNumber;
             srs = stmt.executeQuery(sql);
             
@@ -177,7 +174,7 @@ public class DBMethods {
             
             if(!status.equals("Requested")){
             sql = "SELECT supplierEquipmentCode, supplierName, numberOfPieces "
-                    + "FROM EERSupplierEquipments "
+                    + "FROM ERRSupplierEquipments "
                     + "WHERE requestNumber = " + requestNumber;
             srs = stmt.executeQuery(sql);
             while(srs.next())
@@ -205,8 +202,9 @@ public class DBMethods {
                     + "WHERE code = " + code;
             ResultSet srs = stmt.executeQuery(sql);
             
-            bie = new BuildItEquipment(srs.getInt("code"), srs.getString("type"), srs.getString("description"), srs.getString("requirements"));
-        } catch (Exception ex) {
+            srs.next();
+            bie = new BuildItEquipment(srs.getInt("code"), srs.getString("typeName"), srs.getString("description"), srs.getString("requirements"));
+        } catch (SQLException ex) {
             ex.printStackTrace();
             DBConnector.closeConnection(con);
             throw new DBException(ex);
@@ -224,10 +222,11 @@ public class DBMethods {
             
             String sql = "SELECT supplierEquipmentCode, supplierName, equipmentCode, dailyRentalPrice "
                     + "FROM SupplierEquipments "
-                    + "WHERE supplierEquipmentCode = " + code + " AND supplierName = " + name;
+                    + "WHERE supplierEquipmentCode = " + code + " AND supplierName = '" + name + "'";
             ResultSet srs = stmt.executeQuery(sql);
             
-            se = new SupplierEquipment(srs.getInt("supplierEquipmentCode"), srs.getString("supplierName"), srs.getInt("equipmentCode"), srs.getInt("dailyRentalPrice"));
+            srs.next();
+            se = new SupplierEquipment(srs.getInt("supplierEquipmentCode"), srs.getString("supplierName"), srs.getInt("equipmentCode"), srs.getDouble("dailyRentalPrice"));
         } catch (Exception ex) {
             ex.printStackTrace();
             DBConnector.closeConnection(con);
@@ -302,39 +301,16 @@ public class DBMethods {
         return i;
     }
 
-    public static int getRequestNumber(LocalDate requestDate, int employeeID,LocalDate startDate,LocalDate endDate,String constructionSite) throws DBException{
-        int i = 0;
-        Connection con = null;
-        try{
-            con = DBConnector.getConnection();
-            Statement stmt = con.createStatement();
-            
-            String sql = "SELECT requestNumber "
-                    + "FROM EquipmentRentalRequest "
-                    + "WHERE requestDate = " + java.sql.Date.valueOf(requestDate)
-                    + " AND siteEngineerID = " + employeeID
-                    + " AND rentalPeriodStart = " + java.sql.Date.valueOf(startDate)
-                    + " AND rentalPeriodEnd = " + java.sql.Date.valueOf(endDate)
-                    + " AND constructionSite = " + constructionSite;
-            ResultSet srs = stmt.executeQuery(sql);
-            i = srs.getInt("requestNumber");        
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            DBConnector.closeConnection(con);
-            throw new DBException(ex);
-        }
-        DBConnector.closeConnection(con);
-        return i;
-    }
     public static void setEquipmentRentalRequest(int employeeID,LocalDate startDate,LocalDate endDate,String constructionSite,HashMap<BuildItEquipment,Integer> codes) throws DBException{
         LocalDate today= LocalDate.now();
+        int requestNumber = 0;
         Connection con = null;
         try{
         con = DBConnector.getConnection();
         Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY); 
         String insert = "INSERT INTO EquipmentRentalRequests (requestDate,constructionSite,rentalPeriodStart,rentalPeriodEnd,rentalStatus,siteEngineerID) values " 
                 +"(?,?,?,?,?,?)";
-        PreparedStatement ps = con.prepareStatement(insert);
+        PreparedStatement ps = con.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS);
         ps.setDate(1, java.sql.Date.valueOf(today));
         ps.setString(2, constructionSite);
         ps.setDate(3, java.sql.Date.valueOf(startDate));
@@ -343,14 +319,26 @@ public class DBMethods {
         ps.setInt(6, employeeID);
         ps.executeUpdate();
         
+        ResultSet generatedKeys = ps.getGeneratedKeys();
+        if(generatedKeys.next())
+            requestNumber = generatedKeys.getInt(1);
+                
         for(Map.Entry<BuildItEquipment, Integer> entry : codes.entrySet()) {
         BuildItEquipment key = entry.getKey();
         Integer value = entry.getValue();
         
-        String ins = "INSERT INTO ERRBuildItEquipments ()"
+        String ins = "INSERT INTO ERRBuildItEquipments (requestNumber, equipmentCode, numberOfPieces) values "
+                + "(?,?,?)";
+        ps = con.prepareStatement(ins);
+        ps.setInt(1, requestNumber);
+        ps.setInt(2, key.getCode());
+        ps.setInt(3, value);
+        ps.executeUpdate();
         }
         } catch (SQLException ex) {
             ex.printStackTrace();
+            DBConnector.closeConnection(con);
+            throw new DBException(ex);
         }
         DBConnector.closeConnection(con);
     }
@@ -378,11 +366,17 @@ public class DBMethods {
     }
     
     public static void main(String[] args)throws DBException,SQLException{
+        getSite("Veldstraat 35, 9000 Gent");
+        getSupplier("Caterpillar");
+        getBuildItEquipment(11);
+        getSupplierEquipment(1234, "Boels nv");
+        getEER(181);
+        System.exit(0);
         LocalDate s = LocalDate.now();
         LocalDate e = LocalDate.now();
-        BuildItEquipment bie = new BuildItEquipment(11, "kraan", "hefvermogen 550kg", null);
+        BuildItEquipment bie = getBuildItEquipment(11);
         HashMap<BuildItEquipment, Integer> h = new HashMap<BuildItEquipment, Integer>();
         h.put(bie,6);
-        setEquipmentRentalRequest(1700000001, s,e , "Veldstraat 35, 9000 Gent", h);
+        setEquipmentRentalRequest(4, s,e , "Veldstraat 35, 9000 Gent", h);
     }
 }
