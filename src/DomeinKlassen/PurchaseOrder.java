@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package buildit;
+package DomeinKlassen;
 
+import DBklassen.DBMethods;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -19,13 +20,11 @@ public class PurchaseOrder {
     private Employee handlingClerk;
     private Supplier supplier;
     private Site constructionSite;
-    private Equipment supplierEquipment;
-
 
     public PurchaseOrder(int orderNumber, Date orderDate,
             int handlingClerkCode, String supplierName, int supplierEquipmentCode, 
             int dailyRentalPrice, Date rentalPeriodStart, Date rentalPeriodEnd,
-            int totalRentalPrice, String constructionSite) {                     //String en int input is mss makkelijker om mee te werken dan Employee of Supplier input?
+            int totalRentalPrice, String constructionSite) throws DBklassen.DBException{                     //String en int input is mss makkelijker om mee te werken dan Employee of Supplier input?
         this.orderNumber = orderNumber;
         this.supplierEquipmentCode = supplierEquipmentCode;
         this.dailyRentalPrice = dailyRentalPrice;
@@ -41,7 +40,6 @@ public class PurchaseOrder {
         this.handlingClerk = DBMethods.getEmployee(handlingClerkCode);          //Hiervoor zijn methodes nodig die een object vinden uit de database adhv een van hun variabelen
         this.supplier = DBMethods.getSupplier(supplierName);
         this.constructionSite = DBMethods.getSite(constructionSite);
-        this.supplierEquipment = DBMethods.getEquipment(DBMethods.getEquipmentCode(supplierEquipment));
     }
 
     public int getOrderNumber() {
@@ -162,14 +160,6 @@ public class PurchaseOrder {
 
     public void setConstructionSite(Site constructionSite) {
         this.constructionSite = constructionSite;
-    }
-
-    public Equipment getSupplierEquipment() {
-        return supplierEquipment;
-    }
-
-    public void setSupplierEquipment(Equipment supplierEquipment) {
-        this.supplierEquipment = supplierEquipment;
     }
     
     public void printOutput(){

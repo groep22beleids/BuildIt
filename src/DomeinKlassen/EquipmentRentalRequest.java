@@ -3,8 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package buildit;
+package DomeinKlassen;
 
+import DBklassen.DBException;
+import DBklassen.DBMethods;
+import DomeinKlassen.BuildItEquipment;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -13,19 +16,16 @@ import java.util.HashMap;
  * @author Dries
  */
 public class EquipmentRentalRequest {
-    enum Status{REQUESTED , PROCESSED};
-    
     private Site constructionSite;
     private Employee siteEngineerID, clerkID, worksEngineerID;
     private int requestNumber;
     private Date requestDate, rentalPeriodStart, rentalPeriodEnd, logDate;     
-    private Status status;
     private HashMap<BuildItEquipment, Integer> selectedBuildItEquipment;
     private HashMap<SupplierEquipment, Integer> selectedSupplierEquipment;
-    private String reasonForCancellationOrRefusal;
+    private String reasonForCancellationOrRefusal, rentalStatus;
 
     public EquipmentRentalRequest(int code, Date requestDate, String constructionSite, 
-            Date rentalPeriodStart, Date rentalPeriodEnd, Status rentalStatus, 
+            Date rentalPeriodStart, Date rentalPeriodEnd, String rentalStatus, 
             int siteEngineerID, HashMap<BuildItEquipment, Integer> h) throws DBException{
         this.siteEngineerID = DBMethods.getEmployee(siteEngineerID);                      
         this.constructionSite = DBMethods.getSite(constructionSite);
@@ -34,7 +34,7 @@ public class EquipmentRentalRequest {
         this.rentalPeriodStart = rentalPeriodStart;
         this.rentalPeriodEnd = rentalPeriodEnd;
         this.logDate = new Date();
-        this.status = Status.REQUESTED;
+        this.rentalStatus = rentalStatus;
         this.selectedBuildItEquipment = h;
     }
 
@@ -86,12 +86,12 @@ public class EquipmentRentalRequest {
         this.logDate = logDate;
     }
 
-    public Status getStatus() {
-        return status;
+    public String getRentalStatus() {
+        return this.rentalStatus;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setRentalStatus(String status) {
+        this.rentalStatus = status;
     }
 
     public Employee getSiteEngineerID() {

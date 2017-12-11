@@ -3,20 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package buildit;
+package DomeinKlassen;
 
 /**
  *
  * @author Dries
  */
 public class SupplierEquipment {
-    private int supplierEquipmentCode, buildItEauipmentCode;
+    private int supplierEquipmentCode, buildItEquipmentCode, dailyRentalPrice;
     private String supplierName;
     
-    public SupplierEquipment(int sEC, String sN, int bEC){
+    public SupplierEquipment(int sEC, String sN, int bEC, int price){
         this.supplierEquipmentCode = sEC;
         this.supplierName = sN;
-        this.buildItEauipmentCode = bEC;
+        this.buildItEquipmentCode = bEC;
+        this.dailyRentalPrice = price;
     }
 
     public int getSupplierEquipmentCode() {
@@ -27,12 +28,12 @@ public class SupplierEquipment {
         this.supplierEquipmentCode = supplierEquipmentCode;
     }
 
-    public int getBuildItEauipmentCode() {
-        return buildItEauipmentCode;
+    public int getBuildItEquipmentCode() {
+        return buildItEquipmentCode;
     }
 
-    public void setBuildItEauipmentCode(int buildItEauipmentCode) {
-        this.buildItEauipmentCode = buildItEauipmentCode;
+    public void setBuildItEquipmentCode(int buildItEauipmentCode) {
+        this.buildItEquipmentCode = buildItEauipmentCode;
     }
 
     public String getSupplierName() {
@@ -41,6 +42,14 @@ public class SupplierEquipment {
 
     public void setSupplierName(String supplierName) {
         this.supplierName = supplierName;
+    }
+
+    public int getDailyRentalPrice() {
+        return dailyRentalPrice;
+    }
+
+    public void setDailyRentalPrice(int dailyRentalPrice) {
+        this.dailyRentalPrice = dailyRentalPrice;
     }
     
 }

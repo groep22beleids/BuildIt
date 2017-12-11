@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package buildit;
+package DomeinKlassen;
 
 import java.util.Objects;
 
@@ -11,22 +11,26 @@ import java.util.Objects;
  *
  * @author Dries
  */
-public class Supplier {
-    private String name, email;
-    private int phoneNumber;
+public class Employee {
+    private String email, function;
+    private int employeeID, phoneNumber;
 
-    public Supplier(String name, String email, int phoneNumber) {
-        this.name = name;
+    public Employee() {
+    }
+    
+    public Employee(int employeeID, String email, int phoneNumber, String function) {
+        this.employeeID = employeeID;                                           
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.function = function;
     }
 
-    public String getName() {
-        return name;
+    public int getEmployeeID() {
+        return employeeID;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setEmployeeID(int employeeID) {                                 //Mag niet gebruikt worden
+        this.employeeID = employeeID;
     }
 
     public String getEmail() {
@@ -47,7 +51,7 @@ public class Supplier {
 
     @Override
     public String toString() {
-        return "Name: " + name + ", email: " + email + ", phoneNumber: " + phoneNumber + " ";
+        return "EmployeeID: " + employeeID + ", email: " + email + ", phoneNumber: " + phoneNumber + ", function: " + function + " ";
     }
 
     @Override
@@ -61,14 +65,17 @@ public class Supplier {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Supplier other = (Supplier) obj;
+        final Employee other = (Employee) obj;
+        if (this.employeeID != other.employeeID) {
+            return false;
+        }
         if (this.phoneNumber != other.phoneNumber) {
             return false;
         }
-        if (!Objects.equals(this.name, other.name)) {
+        if (!Objects.equals(this.email, other.email)) {
             return false;
         }
-        if (!Objects.equals(this.email, other.email)) {
+        if (this.function != other.function) {
             return false;
         }
         return true;
